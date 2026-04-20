@@ -1,0 +1,74 @@
+classDiagram
+    class AuthService {
+        +verifyCredentials(email, pass) boolean
+        +createAccount(email, pass) void
+    }
+
+
+    class User {
+        <<Abstract>>
+        +int userId
+        +String userEmail
+        +String accountRole
+        +signIn() boolean
+    }
+
+
+    class Guest {
+        +showMapWithFilters(filterType) void
+    }
+
+
+    class Traveler {
+        +boolean statusVerified
+        +initiateSession() Session
+        +sendRequest(Session) Application
+        +sendMessage() void
+    }
+
+
+    class Organizer {
+        +hostPaidEvent() Session
+        +getPerformanceStats() void
+    }
+
+
+    class Admin {
+        +restrictUser(User) void
+        +removeContent(Session) void
+    }
+
+
+    class Session {
+        +int sessionId
+        +String geoPosition
+        +Date scheduledDate
+        +boolean isPaid
+        +fetchInfo() String
+    }
+
+
+    class Application {
+        +int requestId
+        +Date timestamp
+        +String currentStatus
+        +setAccepted() void
+        +setDeclined() void
+    }
+
+
+    User <|-- Guest
+    User <|-- Traveler
+    User <|-- Admin
+    Traveler <|-- Organizer
+
+
+    User ..> AuthService : uses
+
+
+    Traveler "1" -- "0..*" Session : organizes
+    Traveler "1" -- "0..*" Application : submits
+    Organizer "1" -- "0..*" Session : hosts_commercial
+    Session "1" *-- "0..*" Application : contains
+    Admin "1" -- "*" User : manages
+    Admin "1" -- "*" Session : moderates
