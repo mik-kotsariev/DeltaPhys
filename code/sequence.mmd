@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor U as Учасник
+    participant W as Інтерфейс
+    participant S as Сервіс API
+    participant DB as База даних
+
+    U->>W: Вибір події на мапі
+    activate W
+    W->>U: Відображення деталей (getInfo)
+    deactivate W
+
+    U->>W: Натискання Подати заявку
+    activate W
+    W->>S: postJoinRequest(activityId)
+    activate S
+    S->>DB: Перевірка верифікації isVerified
+    activate DB
+    DB-->>S: Статус підтверджено
+    deactivate DB
+    S->>DB: Створення нового об'єкта Application
+    activate DB
+    DB-->>S: OK appId згенеровано
+    deactivate DB
+    S-->>W: 201 Created
+    deactivate S
+    W-->>U: Повідомлення про успішне надсилання
+    deactivate W
