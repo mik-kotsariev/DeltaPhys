@@ -1,0 +1,46 @@
+flowchart LR
+    subgraph Actors [ ]
+        direction TB
+        G((Гість))
+        T((Подорожуючий))
+        O((Організатор))
+        A((Адміністратор))
+    end
+
+    subgraph System [Платформа DeltaPhys v2]
+        direction TB
+        UC1([Перегляд мапи])
+        UC11([Фільтрація за спортом])
+        UC2([Реєстрація])
+        UC_Auth([Авторизація])
+        UC3([Пошук партнерів])
+        UC4([Чат сесії])
+        UC5([Створення сесії])
+        UC_Upload([Завантаження медіа])
+        UC6([Заявка на участь])
+        UC7([Верифікація])
+        UC8([Комерційні тури])
+        UC10([Модерація])
+
+        UC5 -.->|include| UC_Auth
+        UC6 -.->|include| UC_Auth
+        UC11 -.->|extend| UC1
+        UC_Upload -.->|extend| UC5
+    end
+
+    G --- UC1
+    G --- UC2
+    
+    T --- UC3
+    T --- UC4
+    T --- UC5
+    T --- UC6
+    T --- UC7
+    
+    O --- UC8
+    A --- UC10
+
+    T -.->|успадковує| G
+    O -.->|успадковує| T
+
+    style Actors fill:none,stroke:none
