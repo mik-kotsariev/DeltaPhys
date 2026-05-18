@@ -1,0 +1,16 @@
+{
+  "name": "lab3-testing",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "DeltaPhysService.js",
+  "scripts": {
+  "test": "jest --coverage"
+},
+  "keywords": [],
+  "devDependencies": {
+    "jest": "^30.4.2"
+  }
+}
