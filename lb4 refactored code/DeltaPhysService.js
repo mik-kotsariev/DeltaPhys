@@ -1,6 +1,7 @@
-const crypto = require('crypto');
+// Issue 1 & SonarQube: Безпечна генерація UUID з використанням префіксу 'node:'
+const crypto = require('node:crypto'); 
 
-// Issue 3: Винесення магічних чисел у конфігурацію
+// Issue 3: Усунення магічних чисел — усі ліміти винесені в єдину конфігурацію
 const CONFIG = {
     MIN_AGE: 16,
     MAX_AGE: 99,
@@ -14,7 +15,7 @@ class PlatformUser {
     constructor(id) {
         this.id = id;
     }
-    // Issue 5: Поліморфізм замість instanceof
+    // Issue 5: Поліморфний метод замість перевірки через instanceof
     canCreateTours() {
         return false; 
     }
@@ -23,6 +24,7 @@ class PlatformUser {
 class Visitor extends PlatformUser {}
 class Participant extends Visitor {}
 class Organizer extends Participant {
+    // Issue 5: Перевизначення методу для розширення прав організатора
     canCreateTours() {
         return true; 
     }
@@ -38,7 +40,7 @@ class EventSession {
         this.registeredUsers = [];
     }
 
-    // Issue 2: Відновлення інкапсуляції
+    // Issue 2: Відновлення інкапсуляції — об'єкт сам перевіряє та змінює свій стан
     registerParticipant(participant) {
         if (this.registeredUsers.length >= this.maxCapacity) {
             throw new Error("Немає вільних місць у сесії.");
@@ -60,17 +62,19 @@ class DeltaPhysService {
             throw new Error("Учасник або сесія не можуть бути null/undefined.");
         }
 
+        // Issue 3: Використання констант CONFIG замість захардкодженних чисел
         if (age < CONFIG.MIN_AGE || age > CONFIG.MAX_AGE) {
             throw new RangeError(`Вік повинен бути від ${CONFIG.MIN_AGE} до ${CONFIG.MAX_AGE} років.`);
         }
 
-        // Виклик інкапсульованого методу замість прямої мутації стану
+        // Issue 2: Виклик інкапсульованого методу (без прямої мутації масиву ззовні)
         session.registerParticipant(participant);
         return true;
     }
 
     createPaidTour(organizer, name, price, maxCapacity) {
-        if (!organizer || !organizer.canCreateTours()) { 
+        // Issue 5 & SonarQube: Перевірка ролі через поліморфізм та опціональний ланцюжок (?.)
+        if (!organizer?.canCreateTours()) { 
             throw new Error("Тільки організатор може створювати платні тури.");
         }
 
@@ -78,6 +82,7 @@ class DeltaPhysService {
             throw new Error("Назва не може бути порожньою.");
         }
 
+        // Issue 3: Використання констант CONFIG для ціни та місткості
         if (price < CONFIG.MIN_PRICE || price > CONFIG.MAX_PRICE) {
             throw new RangeError(`Ціна має бути від ${CONFIG.MIN_PRICE} до ${CONFIG.MAX_PRICE}.`);
         }
@@ -86,22 +91,23 @@ class DeltaPhysService {
             throw new RangeError(`Місткість має бути від ${CONFIG.MIN_CAPACITY} до ${CONFIG.MAX_CAPACITY}.`);
         }
 
-        // Issue 1: Безпечна генерація ID
+        // Issue 1: Криптографічно безпечна генерація унікальних UUID для запобігання колізіям
         return new EventSession(crypto.randomUUID(), name, price, maxCapacity); 
     }
 
     filterEvents(events, maxPrice, minAvailableSpots) { 
+        // SonarQube: Викидаємо суворий TypeError замість базового Error для перевірки типів
         if (!Array.isArray(events)) {
-            throw new Error("Очікується масив подій.");
+            throw new TypeError("Очікується масив подій.");
         }
 
         if (maxPrice < 0) { 
             throw new RangeError("Максимальна ціна не може бути від'ємною.");
         }
 
-        // Issue 4: Захисна перевірка (Guard Clause) для minAvailableSpots
-        if (typeof minAvailableSpots !== 'number' || minAvailableSpots < 0 || isNaN(minAvailableSpots)) {
-            throw new Error("minAvailableSpots має бути коректним невід'ємним числом.");
+        // Issue 4 & SonarQube: Захисна перевірка (Guard Clause) з використанням суворого Number.isNaN
+        if (typeof minAvailableSpots !== 'number' || minAvailableSpots < 0 || Number.isNaN(minAvailableSpots)) {
+            throw new TypeError("minAvailableSpots має бути коректним невід'ємним числом.");
         }
 
         const result = [];

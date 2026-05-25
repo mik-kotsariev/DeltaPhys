@@ -1,4 +1,4 @@
-const { Participant, Organizer, EventSession, DeltaPhysService } = require('./DeltaPhysService');
+const { Visitor, Participant, Organizer, EventSession, DeltaPhysService } = require('./DeltaPhysService');
 
 describe('DeltaPhysService Tests - Lab 3 & 4 (Refactored)', () => {
     let service;
@@ -54,7 +54,6 @@ describe('DeltaPhysService Tests - Lab 3 & 4 (Refactored)', () => {
         const participant2 = new Participant(2);
         const session = new EventSession(1, "Ексклюзивний воркшоп", 0, 1);
         
-        // Використовуємо інкапсульований метод замість прямого push
         session.registerParticipant(participant1);
 
         expect(() => service.applyForParticipation(participant2, session, 20)).toThrow("Немає вільних місць у сесії.");
@@ -68,7 +67,6 @@ describe('DeltaPhysService Tests - Lab 3 & 4 (Refactored)', () => {
         expect(session).not.toBeNull();
         expect(session.name).toBe("Фізичний тур");
         expect(session.price).toBe(500);
-        // Перевіряємо, що ID тепер генерується як UUID рядок (Issue 1)
         expect(typeof session.id).toBe('string');
         expect(session.id.length).toBeGreaterThan(10);
     });
@@ -108,9 +106,41 @@ describe('DeltaPhysService Tests - Lab 3 & 4 (Refactored)', () => {
             new EventSession(1, "Подія", 50, 10)
         ];
 
-        // Перевіряємо валідацію minAvailableSpots (Issue 4)
         expect(() => service.filterEvents(events, 100, undefined)).toThrow();
         expect(() => service.filterEvents(events, 100, -5)).toThrow();
         expect(() => service.filterEvents(events, 100, "5")).toThrow();
+    });
+
+    // --- НОВІ ТЕСТИ ДЛЯ 100% ПОКРИТТЯ ---
+
+    test('applyForParticipation_NullArguments_ThrowsException', () => {
+        const session = new EventSession(1, "Тест", 0, 10);
+        expect(() => service.applyForParticipation(null, session, 20)).toThrow("Учасник або сесія не можуть бути null/undefined.");
+        expect(() => service.applyForParticipation(new Participant(1), null, 20)).toThrow("Учасник або сесія не можуть бути null/undefined.");
+    });
+
+    test('applyForParticipation_UserAlreadyRegistered_ThrowsException', () => {
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Тест", 0, 10);
+        
+        service.applyForParticipation(participant, session, 25);
+        
+        expect(() => service.applyForParticipation(participant, session, 25)).toThrow("Користувач вже зареєстрований.");
+    });
+
+    test('createPaidTour_NotOrganizer_ThrowsException', () => {
+        const visitor = new Visitor(1); 
+        expect(() => service.createPaidTour(visitor, "Тур", 500, 20)).toThrow("Тільки організатор може створювати платні тури.");
+        expect(() => service.createPaidTour(null, "Тур", 500, 20)).toThrow();
+    });
+
+    test('createPaidTour_EmptyName_ThrowsException', () => {
+        const organizer = new Organizer(1);
+        expect(() => service.createPaidTour(organizer, "", 500, 20)).toThrow("Назва не може бути порожньою.");
+        expect(() => service.createPaidTour(organizer, "   ", 500, 20)).toThrow("Назва не може бути порожньою.");
+    });
+
+    test('filterEvents_NotArray_ThrowsException', () => {
+        expect(() => service.filterEvents("not an array", 50, 1)).toThrow("Очікується масив подій.");
     });
 });
