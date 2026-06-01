@@ -5,10 +5,10 @@ class Participant {
 }
 
 class EventSession {
-    constructor(id, title, registeredCount, maxCapacity) {
+    constructor(id, title, registeredCount, maxCapacity) {     //Issue 1: видалити registeredCount
         this.id = id;
         this.title = title;
-        this.registeredUsers = new Set(); 
+        this.registeredUsers = new Set(); //Issue 2: Порушення принципу інкапсуляції
         this.maxCapacity = maxCapacity;
     }
 }
@@ -29,7 +29,7 @@ class EventService {
         );
     }
 
-    applyForParticipation(participant, session, age) {
+    applyForParticipation(participant, session, age) { //Issue 3: Невикористаний параметр методу
         if (typeof age !== 'number' || !isFinite(age)) {
             throw new RangeError("Вік має бути скінченним числом");
         }
@@ -38,7 +38,7 @@ class EventService {
             throw new TypeError("Некоректний об'єкт сесії");
         }
 
-        const pId = participant.id;
+        const pId = participant.id; //issue 4: Відсутність валідації вхідних параметрів та потенційний Runtime Error
 
         if (session.registeredUsers.has(pId)) {
             throw new Error("Учасник вже зареєстрований");
@@ -48,14 +48,14 @@ class EventService {
         return true;
     }
 
-    createPaidTour(organizer, title, price, maxParticipants) {
+    createPaidTour(organizer, title, price, maxParticipants) { //Issue 5: Потенційне падіння через відсутність валідації на null/undefined
         const trimmedTitle = title.trim(); 
         
         if (trimmedTitle === "") {
             throw new Error("Назва не може бути порожньою");
         }
 
-        return {
+        return { //Issue 6: Жорстке зв'язування даних та дублювання логіки створення об'єктів
             organizerId: organizer.id,
             title: trimmedTitle,
             price: price,
