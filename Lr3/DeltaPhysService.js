@@ -20,9 +20,9 @@ class EventSession {
     }
 }
 
-class DeltaPhysService {
+class DeltaPhysService { //Issue 4: Порушення принципу єдиної відповідальності (SRP)
 
-    applyForParticipation(participant, session, age) {
+    applyForParticipation(participant, session, age) { //Issue 1: Невикористаний параметр age
         if (!participant || !session) {
             throw new Error("Учасник та сесія не можуть бути null");
         }
@@ -36,11 +36,11 @@ class DeltaPhysService {
             throw new Error("Немає вільних місць");
         }
 
-        session.participants.push(participant);
+        session.participants.push(participant); //Issue 3: Жорстка залежність від структури даних (Hard-coded dependency)
         return true;
     }
 
-    createPaidTour(user, title, price, capacity) {
+    createPaidTour(user, title, price, capacity) { //Issue 5: Недостатня валідація вхідних даних (Type Checking)
         if (!(user instanceof Organizer)) {
             throw new Error("Тільки організатор може створювати тури");
         }
@@ -53,10 +53,10 @@ class DeltaPhysService {
             throw new Error("Некоректні параметри ціни або місткості");
         }
 
-        return new EventSession(Date.now(), title, price, capacity);
+        return new EventSession(Date.now(), title, price, capacity); //Issue 2: Використання ненадійного ID для EventSession
     }
     
-    validateAndFilter(sessions, minPrice) {
+    validateAndFilter(sessions, minPrice) { //Issue 5: Недостатня валідація вхідних даних (Type Checking)
         if (!Array.isArray(sessions)) throw new Error("Потрібен масив");
         return sessions.filter(s => s.price >= minPrice);
     }
