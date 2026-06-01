@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1780345972009" clover="3.2.0">
+  <project timestamp="1780345972009" name="All files">
+    <metrics statements="21" coveredstatements="20" conditionals="16" coveredconditionals="15" methods="6" coveredmethods="6" elements="43" coveredelements="41" complexity="0" loc="21" ncloc="21" packages="1" files="1" classes="1"/>
+    <file name="TourService.js" path="C:\Users\LourYde\Desktop\DeltaPhys-Stohnii\LB3-Stohnii\TourService.js">
+      <metrics statements="21" coveredstatements="20" conditionals="16" coveredconditionals="15" methods="6" coveredmethods="6"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="18" count="12" type="stmt"/>
+      <line num="19" count="12" type="stmt"/>
+      <line num="25" count="11" type="stmt"/>
+      <line num="31" count="1" type="stmt"/>
+      <line num="37" count="10" type="stmt"/>
+      <line num="39" count="6" type="stmt"/>
+      <line num="40" count="6" type="stmt"/>
+      <line num="41" count="6" type="stmt"/>
+      <line num="45" count="10" type="cond" truecount="3" falsecount="1"/>
+      <line num="46" count="0" type="stmt"/>
+      <line num="49" count="10" type="cond" truecount="4" falsecount="0"/>
+      <line num="50" count="2" type="stmt"/>
+      <line num="53" count="8" type="cond" truecount="4" falsecount="0"/>
+      <line num="54" count="2" type="stmt"/>
+      <line num="65" count="11" type="cond" truecount="4" falsecount="0"/>
+      <line num="66" count="1" type="stmt"/>
+      <line num="69" count="10" type="stmt"/>
+      <line num="73" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>
