@@ -5,17 +5,35 @@ class Participant {
 }
 
 class EventSession {
-    constructor(id, title, registeredCount, maxCapacity) {     //Issue 1: видалити registeredCount
+
+    constructor(id, title, maxCapacity) {
         this.id = id;
         this.title = title;
-        this.registeredUsers = new Set(); //Issue 2: Порушення принципу інкапсуляції
+        this.registeredUsers = new Set();
         this.maxCapacity = maxCapacity;
+    }
+
+    hasParticipant(participantId) {
+        return this.registeredUsers.has(participantId);
+    }
+
+    registerParticipant(participantId) {
+        this.registeredUsers.add(participantId);
     }
 }
 
 class Organizer {
     constructor(id) {
         this.id = id;
+    }
+}
+
+class PaidTour {
+    constructor(organizerId, title, price, maxParticipants) {
+        this.organizerId = organizerId;
+        this.title = title;
+        this.price = price;
+        this.maxParticipants = maxParticipants;
     }
 }
 
@@ -29,39 +47,41 @@ class EventService {
         );
     }
 
-    applyForParticipation(participant, session, age) { //Issue 3: Невикористаний параметр методу
-        if (typeof age !== 'number' || !isFinite(age)) {
-            throw new RangeError("Вік має бути скінченним числом");
-        }
-        
+    applyForParticipation(participant, session) { 
         if (!session || typeof session !== 'object' || !('registeredUsers' in session)) {
             throw new TypeError("Некоректний об'єкт сесії");
         }
 
-        const pId = participant.id; //issue 4: Відсутність валідації вхідних параметрів та потенційний Runtime Error
+        if (!participant || typeof participant !== 'object' || !('id' in participant)) {
+            throw new TypeError("Некоректний об'єкт учасника");
+        }
 
-        if (session.registeredUsers.has(pId)) {
+        const pId = participant.id;
+
+        if (session.hasParticipant(pId)) {
             throw new Error("Учасник вже зареєстрований");
         }
         
-        session.registeredUsers.add(pId);
+        session.registerParticipant(pId);
         return true;
     }
 
-    createPaidTour(organizer, title, price, maxParticipants) { //Issue 5: Потенційне падіння через відсутність валідації на null/undefined
+    createPaidTour(organizer, title, price, maxParticipants) {
+
+        if (!organizer || typeof organizer !== 'object' || !('id' in organizer)) {
+            throw new TypeError("Некоректний об'єкт організатора");
+        }
+        if (typeof title !== 'string') {
+            throw new TypeError("Назва туру має бути рядком");
+        }
+
         const trimmedTitle = title.trim(); 
         
         if (trimmedTitle === "") {
             throw new Error("Назва не може бути порожньою");
         }
 
-        return { //Issue 6: Жорстке зв'язування даних та дублювання логіки створення об'єктів
-            organizerId: organizer.id,
-            title: trimmedTitle,
-            price: price,
-            maxParticipants: maxParticipants
-        };
+        return new PaidTour(organizer.id, trimmedTitle, price, maxParticipants);
     }
 }
-
-module.exports = { Participant, EventSession, Organizer, EventService };
+module.exports = { Participant, EventSession, Organizer, PaidTour, EventService };
