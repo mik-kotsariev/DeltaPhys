@@ -4,7 +4,7 @@ class Participant {
     }
 }
 
-class EventSession {
+class EventSession {    //ISSUE-1: Дублювання властивостей (Відсутність базового класу)
     constructor(id, name, price, totalSpots) {
         this.id = id;
         this.name = name;
@@ -14,8 +14,8 @@ class EventSession {
     }
 }
 
-class PaidTour {
-    constructor(organization, name, price, totalSpots) {
+class PaidTour {    //ISSUE-2: Критична помилка під час фільтрації
+    constructor(organization, name, price, totalSpots) {        //ISSUE-3: Відсутність валідації числових значень при створенні об'єктів
         this.organization = organization;
         this.name = name;
         this.price = price;
@@ -23,15 +23,15 @@ class PaidTour {
     }
 }
 
-class EventService {
-    createPaidTour(organization, name, price, totalSpots) {
+class EventService {    
+    createPaidTour(organization, name, price, totalSpots) {     //ISSUE-4: Неправильне розташування логіки валідації
         if (name === null || name === undefined || name.trim() === "") {
             throw new Error("Назва не може бути порожньою");
         }
         return new PaidTour(organization, name, price, totalSpots);
     }
 
-    filterEvents(eventsList, maxPrice, minSpots) {
+    filterEvents(eventsList, maxPrice, minSpots) {  //ISSUE-5: Неповна перевірка аргументів методу
         if (maxPrice < 0) {
             throw new RangeError("Ціна не може бути від'ємною");
         }
