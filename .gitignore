@@ -1,0 +1,20 @@
+# Залежності
+node_modules/
+
+# Змінні оточення
+.env
+.env.local
+
+# Логи
+*.log
+npm-debug.log*
+
+# Системні файли
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
