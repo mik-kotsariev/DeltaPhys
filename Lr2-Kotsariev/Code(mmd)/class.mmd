@@ -1,0 +1,62 @@
+
+classDiagram
+    class AuthService {
+        +authenticate(email: String, pwd: String): boolean
+        +register(email: String, pwd: String): void
+    }
+    
+    class User {
+        <<Abstract>>
+        -id: int
+        -email: String
+        -role: String
+        +login(): boolean
+    }
+    
+    class Guest {
+        +viewPublicMap(): void
+    }
+    
+    class Traveler {
+        -isVerified: boolean
+        +createSession(): Session
+        +applyForSession(s: Session): Application
+        +writeInChat(): void
+    }
+    
+    class Organizer {
+        +createCommercialSession(): Session
+        +viewStats(): void
+    }
+    
+    class Admin {
+        +blockUser(u: User): void
+        +deleteSession(s: Session): void
+    }
+    
+    class Session {
+        -sessionId: int
+        -location: String
+        -date: Date
+        -isCommercial: boolean
+        +getDetails(): String
+    }
+    
+    class Application {
+        -applicationId: int
+        -dateApplied: Date
+        -status: String
+        +approve(): void
+        +reject(): void
+    }
+    User <|-- Guest
+    User <|-- Traveler
+    User <|-- Organizer
+    User <|-- Admin
+    User ..> AuthService : <<uses>>
+    Traveler "1" -- "*" Session : creates >
+    Traveler "1" -- "*" Application : submits >
+    Organizer "1" -- "*" Session : creates commercial >
+    Session "1" *-- "*" Application : receives
+    Admin ..> User : manages
+    Admin ..> Session : moderates

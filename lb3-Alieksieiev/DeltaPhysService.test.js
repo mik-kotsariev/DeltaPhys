@@ -1,0 +1,107 @@
+const { Participant, Organizer, EventSession, DeltaPhysService } = require('./DeltaPhysService');
+
+describe('DeltaPhysService Tests - Lab 3', () => {
+    let service;
+
+    beforeEach(() => {
+        service = new DeltaPhysService();
+    });
+
+    test('applyForParticipation_ValidAge_ReturnsTrue', () => {
+
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Симуляція фізичного поля (3 точки)", 0, 10);
+
+
+        const result = service.applyForParticipation(participant, session, 25);
+
+
+        expect(result).toBe(true);
+        expect(session.registeredUsers).toContain(participant);
+    });
+
+    test('applyForParticipation_AgeUnder16_ThrowsException', () => {
+
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Семінар", 0, 10);
+
+    
+        expect(() => service.applyForParticipation(participant, session, 15)).toThrow(RangeError);
+    });
+
+    test('applyForParticipation_AgeExactly16_ReturnsTrue', () => {
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Семінар", 0, 10);
+
+     
+        const result = service.applyForParticipation(participant, session, 16);
+
+     
+        expect(result).toBe(true);
+    });
+
+    test('applyForParticipation_AgeExactly99_ReturnsTrue', () => {
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Семінар", 0, 10);
+
+        const result = service.applyForParticipation(participant, session, 99);
+
+        expect(result).toBe(true);
+    });
+
+    test('applyForParticipation_AgeOver99_ThrowsException', () => {
+        const participant = new Participant(1);
+        const session = new EventSession(1, "Семінар", 0, 10);
+
+        expect(() => service.applyForParticipation(participant, session, 100)).toThrow(RangeError);
+    });
+
+    test('applyForParticipation_SessionFull_ThrowsException', () => {
+        const participant1 = new Participant(1);
+        const participant2 = new Participant(2);
+        const session = new EventSession(1, "Ексклюзивний воркшоп", 0, 1);
+        session.registeredUsers.push(participant1);
+
+        expect(() => service.applyForParticipation(participant2, session, 20)).toThrow("Немає вільних місць у сесії.");
+    });
+
+    test('createPaidTour_ValidData_ReturnsSession', () => {
+        const organizer = new Organizer(1);
+
+        const session = service.createPaidTour(organizer, "Фізичний тур", 500, 20);
+
+        expect(session).not.toBeNull();
+        expect(session.name).toBe("Фізичний тур");
+        expect(session.price).toBe(500);
+    });
+
+    test('createPaidTour_PriceUnder50_ThrowsException', () => {
+        const organizer = new Organizer(1);
+
+        expect(() => service.createPaidTour(organizer, "Тур", 49, 20)).toThrow(RangeError);
+    });
+
+    test('createPaidTour_CapacityOver100_ThrowsException', () => {
+        const organizer = new Organizer(1);
+
+        expect(() => service.createPaidTour(organizer, "Тур", 100, 101)).toThrow(RangeError);
+    });
+
+    test('filterEvents_MatchesCriteria_ReturnsFilteredList', () => {
+        const events = [
+            new EventSession(1, "Дешева подія", 40, 10),
+            new EventSession(2, "Дорога подія", 100, 10)
+        ];
+
+        const result = service.filterEvents(events, 50, 1);
+
+        expect(result).toHaveLength(1);
+        expect(result[0].price).toBe(40);
+    });
+
+    test('filterEvents_NegativePrice_ThrowsException', () => {
+        const events = [];
+
+        expect(() => service.filterEvents(events, -10, 1)).toThrow(RangeError);
+    });
+});

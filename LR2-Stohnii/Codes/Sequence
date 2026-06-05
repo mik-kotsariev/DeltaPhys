@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    actor T as Подорожуючий
+    participant UI as Інтерфейс
+    participant S as Backend (Django)
+    participant DB as База даних
+
+
+    T->>UI: Вибирає сесію на мапі
+    UI->>T: showMapWithFilters()
+    T->>UI: Натискає "Подати заявку"
+    UI->>S: sendRequest(sessionId)
+    S->>DB: Перевірка statusVerified
+    DB-->>S: Підтверджено
+    S->>DB: Створення нового об'єкта Application
+    DB-->>S: OK (requestId згенеровано)
+    S-->>UI: 201 Created
+    UI-->>T: "Вашу заявку успішно надіслано"

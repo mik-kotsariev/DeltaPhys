@@ -1,0 +1,26 @@
+sequenceDiagram
+autonumber
+%% Оголошення учасників
+actor U as Екстремал
+participant App as Клієнтський додаток
+participant EventSvc as Сервіс Подій
+participant AuthSvc as Сервіс Верифікації
+participant Data as Сховище (MongoDB)
+%% Відображення мапи та фільтрації (FR-06)
+U->>App: Запит на пошук івентів (фільтр за спортом)
+App->>EventSvc: GET /api/v1/events?category=sportType
+EventSvc-->>App: Повертає JSON з координатами
+App-->>U: Рендер мапи з геомітками
+%% Процес подачі заявки
+U->>App: Ініціює запит на участь (клік)
+App->>EventSvc: POST /api/v1/applications {eventId, userId}
+%% Блок перевірки статусу (FR-04)
+Note over EventSvc,AuthSvc: Перевірка прав доступу (FR-04)
+EventSvc->>AuthSvc: RPC запит: checkUserVerification(userId)
+AuthSvc-->>EventSvc: Відповідь: status = VERIFIED
+%% Збереження в базу
+EventSvc->>Data: saveDocument(applicationData)
+Data-->>EventSvc: підтвердження (docId: 8472B)
+%% Зворотній зв'язок з користувачем
+EventSvc-->>App: HTTP 200 OK (Успішно створено)
+App-->>U: Системне сповіщення: "Ви в списку учасників!"
