@@ -1,0 +1,43 @@
+flowchart LR
+    G((Відвідувач))
+    P((Учасник))
+    C((Організатор))
+    M((Модератор))
+
+    subgraph System ["Платформа DeltaPhys"]
+        direction TB
+        UC1([Пошук подій])
+        UC2([Фільтрація])
+        UC3([Реєстрація])
+        UC4([Авторизація])
+        UC5([Створення сесії])
+        UC6([Заявка на участь])
+        UC7([Чат])
+        UC8([Верифікація])
+        UC9([Платні тури])
+        UC10([Модерація])
+
+        UC2 -.->|успадкування| UC1
+        UC5 -.->|успадкування| UC4
+        UC6 -.->|успадкування| UC4
+    end
+
+    G --- UC1
+    G --- UC3
+    
+    P --- UC5
+    P --- UC6
+    P --- UC7
+    P --- UC8
+
+    C --- UC9
+    M --- UC10
+
+    P -.->|успадкування| G
+    C -.->|успадкування| P
+
+    style G fill:#00,color:#fff,stroke:#000
+    style P fill:#00,color:#fff,stroke:#000
+    style C fill:#00,color:#fff,stroke:#000
+    style M fill:#00,color:#fff,stroke:#000
+    style System fill:#aaaaa,stroke:#333,stroke-width:2px

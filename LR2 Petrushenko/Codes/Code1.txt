@@ -1,0 +1,48 @@
+flowchart TB
+%% Визначення акторів з новими іменами
+Visitor((Відвідувач))
+Athlete((Спортсмен))
+Promoter((Організатор\nтурів))
+SysAdmin((Модератор))
+subgraph "DeltaPhys System Environment"
+direction TB
+subgraph "Geo & Search"
+U_Map([Перегляд геомапи])
+U_Filter([Фільтр за категорією спорту])
+end
+subgraph "Identity & Access"
+U_Reg([Створення профілю])
+U_Login([Вхід у систему])
+U_Ver([Підтвердження особи])
+end
+subgraph "Networking"
+U_Sess([Генерація анкети-сесії])
+U_Chat([Обмін повідомленнями])
+U_Req([Подання заявки на участь])
+U_Pic([Прикріплення медіафайлів])
+end
+subgraph "Management"
+U_Comm([Публікація платних заходів])
+U_Ban([Адміністрування платформи])
+end
+end
+%% Відношення Include та Extend
+U_Sess -.->|<<include>>| U_Login
+U_Req -.->|<<include>>| U_Login
+U_Filter -.->|<<extend>>| U_Map
+U_Pic -.->|<<extend>>| U_Sess
+%% Зв'язки акторів з прецедентами
+Visitor --- U_Map
+Visitor --- U_Reg
+Athlete --- U_Sess
+Athlete --- U_Chat
+Athlete --- U_Req
+Athlete --- U_Ver
+Promoter --- U_Comm
+SysAdmin --- U_Ban
+%% Наслідування акторів (змінений синтаксис ліній)
+Athlete ===>|успадкування| Visitor
+Promoter ===>|успадкування| Athlete
+%% Стилізація для більшої унікальності
+style Visitor fill:#e1f5fe,stroke:#01579b
+style Athlete fill:#e8f5e9,stroke:#1b5e20

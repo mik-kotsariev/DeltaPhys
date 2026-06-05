@@ -1,0 +1,46 @@
+classDiagram
+    class Profile {
+        <<Abstract>>
+        +int profileId
+        +String email
+        +String status
+        +login() boolean
+    }
+
+    class AuthService {
+        +verifyUser(email, password) boolean
+        +register(email, password) void
+    }
+
+    class ActiveMember {
+        +boolean isVerified
+        +createActivity() Activity
+        +submitRequest(Activity) Application
+        +sendMessage() void
+    }
+
+    class Activity {
+        +int activityId
+        +String coordinates
+        +Date date
+        +boolean isPaid
+        +getInfo() String
+    }
+
+    class Application {
+        +int appId
+        +String currentStatus
+        +approve() void
+        +reject() void
+    }
+
+    class Moderator {
+        +deleteActivity(Activity) void
+    }
+
+    Profile <|-- ActiveMember
+    Profile <|-- Moderator
+    Profile ..> AuthService : uses
+    ActiveMember "1" -- "0..*" Activity : organizes
+    Activity "1" *-- "0..*" Application : consists of
+    Moderator "1" -- "*" Profile : monitors

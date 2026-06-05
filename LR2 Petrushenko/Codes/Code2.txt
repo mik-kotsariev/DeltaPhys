@@ -1,0 +1,56 @@
+classDiagram
+class SecurityManager {
++validateHash(email, password) boolean
++registerNew(email, password) void
+}
+class Account {
+<<abstract>>
++String profileId
++String emailAddress
++String accessLevel
++authenticate() boolean
+}
+class Anonymous {
++renderMap(sportCategory) void
+}
+class Athlete {
++boolean isIdentityConfirmed
++buildSession() EventAction
++sendJoinRequest(EventAction) Ticket
++dispatchMessage() void
+}
+class TourPromoter {
++publishCommercialTour() EventAction
++fetchAnalytics() void
+}
+class SystemAdmin {
++banAccount(Account) void
++wipeContent(EventAction) void
+}
+class EventAction {
++String eventId
++String coordinates
++Date meetTime
++boolean requiresPayment
++getSummary() String
+}
+class Ticket {
++String ticketId
++Date requestTime
++String resolution
++approveRequest() void
++denyRequest() void
+}
+%% Ієрархія (Наслідування)
+Account <|-- Anonymous
+Account <|-- Athlete
+Account <|-- SystemAdmin
+Athlete <|-- TourPromoter
+%% Асоціації та залежності (спрощений синтаксис для стабільності)
+Account ..> SecurityManager : depends_on
+Athlete --> EventAction : creates
+Athlete --> Ticket : creates
+TourPromoter --> EventAction : monetizes
+EventAction *-- Ticket : aggregates
+SystemAdmin --> Account : controls
+SystemAdmin --> EventAction : oversees
